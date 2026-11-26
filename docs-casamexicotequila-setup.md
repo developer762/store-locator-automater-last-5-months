@@ -16,13 +16,13 @@ This guide details how to automate `https://casamexicotequila.com/store-locator/
              │ (Every 15 minutes WP Cron fetch)
              ▼
 ┌──────────────────────────┐
-│  WordPress Plugin        │ (casa-mexico-locator-sync)
+│  WordPress Plugin        │ (last_5_month_store_locator)
 │  casamexicotequila.com   │
 └────────────┬─────────────┘
-             │ Atomically writes to /wp-content/uploads/casa-mexico-locations.json
+             │ Atomically writes to /wp-content/uploads/casa-mexico-last-5-month-locations.json
              ▼
 ┌──────────────────────────┐
-│  Store Locator Map UI    │ (Listens to 'cmx:locations-ready' event)
+│  Store Locator Map UI    │ (Listens to 'cmx-l5m:locations-ready' event)
 │  /store-locator/         │
 └──────────────────────────┘
 ```
@@ -75,16 +75,16 @@ This guide details how to automate `https://casamexicotequila.com/store-locator/
 
 ## 3. WordPress Plugin Installation (casamexicotequila.com)
 
-1. Upload the `wordpress/casa-mexico-locator-sync` folder to your WordPress site at:
-   `wp-content/plugins/casa-mexico-locator-sync/`
+1. Upload the `wordpress/last_5_month_store_locator` folder to your WordPress site at:
+   `wp-content/plugins/last_5_month_store_locator/`
 2. Log into WordPress Admin on `casamexicotequila.com`.
-3. Go to **Plugins → Installed Plugins** and activate **Casa Mexico Store Locator Sync**.
-4. Go to **Settings → Casa Mexico Locator**.
+3. Go to **Plugins → Installed Plugins** and activate **Casa Mexico Store Locator (Last 5 Months)**.
+4. Go to **Settings → Last 5 Month Locator**.
 5. Paste your Apps Script Web App URL (`https://script.google.com/macros/s/.../exec`).
 6. Set the **Minimum location count** safety floor (default: `50`).
-7. Click **Save Changes** and click **Sync now**.
+7. Click **Save & Sync Now**, and add `[casa_mexico_locator_last_5_month]` to your page.
 
-The plugin will download the JSON feed, validate every location and coordinate, save it to `https://casamexicotequila.com/wp-content/uploads/casa-mexico-locations.json`, and keep it refreshed automatically every 15 minutes.
+The plugin will download the JSON feed, validate every location and coordinate, save it to `https://casamexicotequila.com/wp-content/uploads/casa-mexico-last-5-month-locations.json`, and keep it refreshed automatically every 15 minutes.
 
 ---
 
@@ -95,7 +95,7 @@ The plugin automatically enqueues the feed loader script on your site.
 To connect your existing Mapbox, Google Maps, or custom JS store locator:
 
 ```javascript
-window.addEventListener('cmx:locations-ready', function (event) {
+window.addEventListener('cmx-l5m:locations-ready', function (event) {
   const locations = event.detail.locations;
   
   // Replace this with your map's update/render function

@@ -1,8 +1,8 @@
-/* Casa Mexico Store Locator Component Styles - Matching casamexicotequila.com/store-locator/ UI */
+/* Casa Mexico Store Locator (Last 5 Months) Component Styles */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-.cmx-locator-wrap {
+.cmx-l5m-locator-wrap {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   color: #2C2825;
   width: 100% !important;
@@ -11,20 +11,20 @@
   box-sizing: border-box;
 }
 
-.cmx-locator-wrap * {
+.cmx-l5m-locator-wrap * {
   box-sizing: border-box;
 }
 
 /* Hide Astra / WP theme default page title header when locator shortcode is present */
-article:has(.cmx-locator-wrap) > header.entry-header,
-.ast-article-single:has(.cmx-locator-wrap) .entry-header,
-body:has(.cmx-locator-wrap) header.entry-header,
-body:has(.cmx-locator-wrap) .entry-header {
+article:has(.cmx-l5m-locator-wrap) > header.entry-header,
+.ast-article-single:has(.cmx-l5m-locator-wrap) .entry-header,
+body:has(.cmx-l5m-locator-wrap) header.entry-header,
+body:has(.cmx-l5m-locator-wrap) .entry-header {
   display: none !important;
 }
 
-/* Header Row & Title - Flexed side-by-side matching reference UI */
-.cmx-header-row {
+/* Header Row & Title - Flexed side-by-side */
+.cmx-l5m-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -33,7 +33,7 @@ body:has(.cmx-locator-wrap) .entry-header {
   margin-bottom: 1.25rem;
 }
 
-.cmx-page-title {
+.cmx-l5m-page-title {
   font-size: 2.2rem;
   font-weight: 700;
   color: #1A202C;
@@ -42,7 +42,49 @@ body:has(.cmx-locator-wrap) .entry-header {
   line-height: 1.2;
 }
 
-.cmx-view-toggle {
+.cmx-l5m-header-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.cmx-l5m-month-filter-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.cmx-l5m-month-icon {
+  position: absolute;
+  left: 0.75rem;
+  color: #B37A4C;
+  font-size: 0.85rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.cmx-l5m-select-month {
+  height: 38px !important;
+  min-height: 38px !important;
+  line-height: 36px !important;
+  padding: 0 2rem 0 2.1rem !important;
+  border-radius: 6px !important;
+  border: 1px solid #D8CFC3 !important;
+  background-color: #EFECE6 !important;
+  color: #2C2825 !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  min-width: 185px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.cmx-l5m-select-month:hover {
+  background-color: #E7E1D6 !important;
+  border-color: #B37A4C !important;
+}
+
+.cmx-l5m-view-toggle {
   display: inline-flex;
   gap: 0.35rem;
   background: #EFECE6;
@@ -51,7 +93,7 @@ body:has(.cmx-locator-wrap) .entry-header {
   border: 1px solid #E2DCD5;
 }
 
-.cmx-toggle-btn {
+.cmx-l5m-toggle-btn {
   background: transparent;
   border: none;
   color: #6E6762;
@@ -67,18 +109,18 @@ body:has(.cmx-locator-wrap) .entry-header {
   gap: 0.4rem;
 }
 
-.cmx-toggle-btn:hover {
+.cmx-l5m-toggle-btn:hover {
   color: #2C2825;
   background: rgba(255, 255, 255, 0.5);
 }
 
-.cmx-toggle-btn.cmx-active {
+.cmx-l5m-toggle-btn.cmx-l5m-active {
   background: #B37A4C;
   color: #FFFFFF;
 }
 
 /* Main Split View Layout: Left Directory Sidebar + Right Map */
-.cmx-locator-body {
+.cmx-l5m-locator-body {
   display: flex;
   flex-direction: row;
   height: 720px;
@@ -90,7 +132,7 @@ body:has(.cmx-locator-wrap) .entry-header {
 }
 
 /* Left Directory Sidebar */
-.cmx-sidebar {
+.cmx-l5m-sidebar {
   flex: 0 0 360px;
   width: 360px;
   min-width: 320px;
@@ -102,7 +144,7 @@ body:has(.cmx-locator-wrap) .entry-header {
   height: 100%;
 }
 
-.cmx-sidebar-header {
+.cmx-l5m-sidebar-header {
   padding: 16px;
   background: #FBF9F5;
   border-bottom: 1px solid #EAE4DB;
@@ -113,14 +155,14 @@ body:has(.cmx-locator-wrap) .entry-header {
 }
 
 /* Search Box with FontAwesome Icon */
-.cmx-search-box {
+.cmx-l5m-search-box {
   width: 100%;
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.cmx-search-icon {
+.cmx-l5m-search-icon {
   position: absolute;
   left: 14px;
   color: #8C847C;
@@ -129,7 +171,7 @@ body:has(.cmx-locator-wrap) .entry-header {
   z-index: 2;
 }
 
-.cmx-search-input {
+.cmx-l5m-search-input {
   width: 100%;
   padding: 11px 14px 11px 38px !important;
   border-radius: 4px !important;
@@ -142,17 +184,17 @@ body:has(.cmx-locator-wrap) .entry-header {
   transition: border-color 0.2s, box-shadow 0.2s !important;
 }
 
-.cmx-search-input:focus {
+.cmx-l5m-search-input:focus {
   border-color: #B37A4C !important;
   box-shadow: 0 0 0 3px rgba(179, 122, 76, 0.15) !important;
 }
 
-.cmx-search-input::placeholder {
+.cmx-l5m-search-input::placeholder {
   color: #9C948B;
 }
 
 /* USE MY LOCATION Button */
-.cmx-btn-location {
+.cmx-l5m-btn-location {
   width: 100%;
   background: #B37A4C;
   color: #FFFFFF;
@@ -169,22 +211,22 @@ body:has(.cmx-locator-wrap) .entry-header {
   box-shadow: 0 2px 6px rgba(179, 122, 76, 0.2);
 }
 
-.cmx-btn-location:hover {
+.cmx-l5m-btn-location:hover {
   background: #9E6738;
 }
 
-.cmx-btn-location:active {
+.cmx-l5m-btn-location:active {
   transform: translateY(1px);
 }
 
 /* Premise Type Pills (ALL, RETAIL, BAR & RESTAURANT) */
-.cmx-type-pills {
+.cmx-l5m-type-pills {
   display: flex;
   gap: 6px;
   width: 100%;
 }
 
-.cmx-type-pill {
+.cmx-l5m-type-pill {
   flex: 1;
   text-align: center;
   background: #EFECE6;
@@ -201,24 +243,24 @@ body:has(.cmx-locator-wrap) .entry-header {
   white-space: nowrap;
 }
 
-.cmx-type-pill:hover {
+.cmx-l5m-type-pill:hover {
   background: #E4DFC8;
   color: #2C2825;
 }
 
-.cmx-type-pill.active {
+.cmx-l5m-type-pill.active {
   background: #B37A4C;
   color: #FFFFFF;
 }
 
 /* Secondary Filter Dropdowns */
-.cmx-filter-dropdowns {
+.cmx-l5m-filter-dropdowns {
   display: flex;
   gap: 6px;
   width: 100%;
 }
 
-.cmx-select {
+.cmx-l5m-select {
   height: 34px !important;
   min-height: 34px !important;
   line-height: 34px !important;
@@ -244,12 +286,12 @@ body:has(.cmx-locator-wrap) .entry-header {
   background-size: 12px !important;
 }
 
-.cmx-select:focus {
+.cmx-l5m-select:focus {
   border-color: #B37A4C !important;
 }
 
 /* Count Header Badge */
-.cmx-count-badge {
+.cmx-l5m-count-badge {
   font-size: 11px;
   font-weight: 700;
   color: #8C847C;
@@ -259,7 +301,7 @@ body:has(.cmx-locator-wrap) .entry-header {
 }
 
 /* Geolocation Nearest Banner */
-.cmx-nearest-banner {
+.cmx-l5m-nearest-banner {
   background: #FAF7F2;
   border: 1px solid #EBE4D8;
   border-radius: 6px;
@@ -267,7 +309,7 @@ body:has(.cmx-locator-wrap) .entry-header {
   margin-top: 4px;
 }
 
-.cmx-nearest-title {
+.cmx-l5m-nearest-title {
   font-size: 0.88rem;
   font-weight: 700;
   color: #2C2825;
@@ -275,32 +317,32 @@ body:has(.cmx-locator-wrap) .entry-header {
   line-height: 1.35;
 }
 
-.cmx-nearest-card {
+.cmx-l5m-nearest-card {
   background: #FFFFFF;
   border: 1px solid #E2DCD5;
   border-radius: 4px;
   padding: 10px 12px;
 }
 
-.cmx-nearest-name {
+.cmx-l5m-nearest-name {
   font-size: 0.92rem;
   font-weight: 700;
   color: #2C2825;
 }
 
-.cmx-nearest-addr {
+.cmx-l5m-nearest-addr {
   font-size: 0.8rem;
   color: #6E6762;
   margin-top: 2px;
   margin-bottom: 8px;
 }
 
-.cmx-nearest-actions {
+.cmx-l5m-nearest-actions {
   display: flex;
   gap: 8px;
 }
 
-.cmx-nearest-btn-map {
+.cmx-l5m-nearest-btn-map {
   background: #8C847C;
   color: #FFFFFF;
   border: none;
@@ -311,7 +353,7 @@ body:has(.cmx-locator-wrap) .entry-header {
   cursor: pointer;
 }
 
-.cmx-nearest-btn-dir {
+.cmx-l5m-nearest-btn-dir {
   background: #B37A4C;
   color: #FFFFFF;
   border-radius: 4px;
@@ -323,14 +365,14 @@ body:has(.cmx-locator-wrap) .entry-header {
 }
 
 /* Store Cards Sidebar List */
-.cmx-sidebar-list {
+.cmx-l5m-sidebar-list {
   flex: 1;
   overflow-y: auto;
   background: #FBF9F5;
   padding: 0;
 }
 
-.cmx-store-card {
+.cmx-l5m-store-card {
   background: #FDFBF7;
   border-bottom: 1px solid #EAE4DB;
   padding: 14px 16px;
@@ -342,17 +384,17 @@ body:has(.cmx-locator-wrap) .entry-header {
   width: 100%;
 }
 
-.cmx-store-card:hover, .cmx-store-card.cmx-active {
+.cmx-l5m-store-card:hover, .cmx-l5m-store-card.cmx-l5m-active {
   background: #F4EFE6;
 }
 
-.cmx-card-main {
+.cmx-l5m-card-main {
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
 
-.cmx-card-title {
+.cmx-l5m-card-title {
   font-size: 15px;
   font-weight: 700;
   color: #2C2825;
@@ -360,21 +402,21 @@ body:has(.cmx-locator-wrap) .entry-header {
   word-break: break-word;
 }
 
-.cmx-card-address {
+.cmx-l5m-card-address {
   font-size: 12.5px;
   color: #6E6762;
   line-height: 1.4;
   word-break: break-word;
 }
 
-.cmx-card-footer {
+.cmx-l5m-card-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 4px;
 }
 
-.cmx-card-type {
+.cmx-l5m-card-type {
   font-size: 10.5px;
   font-weight: 700;
   color: #A66E43;
@@ -382,7 +424,7 @@ body:has(.cmx-locator-wrap) .entry-header {
   letter-spacing: 0.5px;
 }
 
-.cmx-card-dir {
+.cmx-l5m-card-dir {
   font-size: 11px;
   font-weight: 700;
   color: #B37A4C;
@@ -392,12 +434,12 @@ body:has(.cmx-locator-wrap) .entry-header {
   transition: color 0.2s ease;
 }
 
-.cmx-card-dir:hover {
+.cmx-l5m-card-dir:hover {
   color: #8C5A32;
   text-decoration: underline;
 }
 
-.cmx-no-results {
+.cmx-l5m-no-results {
   text-align: center;
   padding: 3rem 1rem;
   color: #8C847C;
@@ -405,7 +447,7 @@ body:has(.cmx-locator-wrap) .entry-header {
 }
 
 /* Right Map Container */
-.cmx-map-container {
+.cmx-l5m-map-container {
   flex: 1;
   height: 100%;
   min-height: 400px;
@@ -413,23 +455,23 @@ body:has(.cmx-locator-wrap) .entry-header {
   z-index: 1;
 }
 
-#cmx-map-canvas {
+#cmx-l5m-map-canvas {
   width: 100%;
   height: 100%;
   background: #E5E0D8;
 }
 
-/* Leaflet Custom Marker & Popup - Clean pin marker with no black box/shadow */
-.leaflet-marker-icon.cmx-custom-pin-marker,
-.leaflet-div-icon.cmx-custom-pin-marker,
-.cmx-custom-pin-marker {
+/* Leaflet Custom Marker & Popup */
+.leaflet-marker-icon.cmx-l5m-custom-pin-marker,
+.leaflet-div-icon.cmx-l5m-custom-pin-marker,
+.cmx-l5m-custom-pin-marker {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   outline: none !important;
 }
 
-.cmx-marker-pin {
+.cmx-l5m-marker-pin {
   width: 32px;
   height: 42px;
   display: flex;
@@ -440,39 +482,39 @@ body:has(.cmx-locator-wrap) .entry-header {
   transition: transform 0.2s ease;
 }
 
-.cmx-marker-pin:hover {
+.cmx-l5m-marker-pin:hover {
   transform: scale(1.15);
 }
 
-.cmx-leaflet-popup .leaflet-popup-content-wrapper {
+.cmx-l5m-leaflet-popup .leaflet-popup-content-wrapper {
   border-radius: 8px;
   padding: 0;
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-.cmx-leaflet-popup .leaflet-popup-content {
+.cmx-l5m-leaflet-popup .leaflet-popup-content {
   margin: 0;
   padding: 14px 16px;
   min-width: 220px;
   font-family: inherit;
 }
 
-.cmx-popup-title {
+.cmx-l5m-popup-title {
   font-weight: 700;
   font-size: 15px;
   color: #2C2825;
   margin-bottom: 4px;
 }
 
-.cmx-popup-address {
+.cmx-l5m-popup-address {
   font-size: 12.5px;
   color: #6E6762;
   margin-bottom: 10px;
   line-height: 1.4;
 }
 
-.cmx-popup-btn {
+.cmx-l5m-popup-btn {
   display: inline-block;
   background: #B37A4C;
   color: #FFFFFF !important;
@@ -486,12 +528,12 @@ body:has(.cmx-locator-wrap) .entry-header {
   letter-spacing: 0.5px;
 }
 
-.cmx-popup-btn:hover {
+.cmx-l5m-popup-btn:hover {
   background: #9E6738;
 }
 
 /* Data Table Container */
-.cmx-table-wrap {
+.cmx-l5m-table-wrap {
   width: 100%;
   overflow-x: auto;
   background: #FFFFFF;
@@ -499,14 +541,14 @@ body:has(.cmx-locator-wrap) .entry-header {
   border-radius: 6px;
 }
 
-.cmx-data-table {
+.cmx-l5m-data-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.88rem;
   text-align: left;
 }
 
-.cmx-data-table th {
+.cmx-l5m-data-table th {
   background: #F4EFE6;
   color: #2C2825;
   font-weight: 700;
@@ -515,13 +557,32 @@ body:has(.cmx-locator-wrap) .entry-header {
   white-space: nowrap;
 }
 
-.cmx-data-table td {
+.cmx-l5m-data-table td {
   padding: 0.85rem 1rem;
   border-bottom: 1px solid #EAE4DB;
   color: #4A4440;
 }
 
-.cmx-table-btn {
+.cmx-l5m-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 12px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cmx-l5m-badge-retail {
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+}
+
+.cmx-l5m-badge-bar-restaurant {
+  background: rgba(179, 122, 76, 0.16);
+  color: #8C5A32;
+}
+
+.cmx-l5m-table-btn {
   background: #B37A4C;
   color: #FFFFFF !important;
   font-size: 0.75rem;
@@ -534,8 +595,8 @@ body:has(.cmx-locator-wrap) .entry-header {
   gap: 0.3rem;
 }
 
-/* Data Table Pagination Bar - Matching Theme Colors & Single-Line Layout */
-.cmx-pagination-bar {
+/* Data Table Pagination Bar */
+.cmx-l5m-pagination-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -547,20 +608,20 @@ body:has(.cmx-locator-wrap) .entry-header {
   border-radius: 0 0 6px 6px;
 }
 
-.cmx-pagination-info {
+.cmx-l5m-pagination-info {
   font-size: 0.85rem;
   color: #6E6762;
   white-space: nowrap;
 }
 
-.cmx-pagination-controls {
+.cmx-l5m-pagination-controls {
   display: flex;
   align-items: center;
   gap: 1.25rem;
   flex-wrap: nowrap;
 }
 
-.cmx-per-page-wrap {
+.cmx-l5m-per-page-wrap {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -569,12 +630,12 @@ body:has(.cmx-locator-wrap) .entry-header {
   white-space: nowrap;
 }
 
-.cmx-per-page-wrap label {
+.cmx-l5m-per-page-wrap label {
   white-space: nowrap !important;
   margin: 0 !important;
 }
 
-.cmx-page-size-select {
+.cmx-l5m-page-size-select {
   height: 32px !important;
   line-height: 30px !important;
   padding: 0 1.6rem 0 0.6rem !important;
@@ -590,13 +651,13 @@ body:has(.cmx-locator-wrap) .entry-header {
   display: inline-block !important;
 }
 
-.cmx-page-btns {
+.cmx-l5m-page-btns {
   display: inline-flex;
   gap: 0.5rem;
   align-items: center;
 }
 
-.cmx-page-btn {
+.cmx-l5m-page-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -614,11 +675,11 @@ body:has(.cmx-locator-wrap) .entry-header {
   box-shadow: 0 2px 4px rgba(179, 122, 76, 0.15);
 }
 
-.cmx-page-btn:hover:not(:disabled) {
+.cmx-l5m-page-btn:hover:not(:disabled) {
   background: #9E6738;
 }
 
-.cmx-page-btn:disabled {
+.cmx-l5m-page-btn:disabled {
   background: #E5DFC8;
   color: #9C948B;
   cursor: not-allowed;
@@ -627,21 +688,21 @@ body:has(.cmx-locator-wrap) .entry-header {
 }
 
 /* Sales Metrics View */
-.cmx-sales-wrap {
+.cmx-l5m-sales-wrap {
   background: #FFFFFF;
   border: 1px solid #EAE4DB;
   border-radius: 6px;
   padding: 1.25rem;
 }
 
-.cmx-sales-metrics {
+.cmx-l5m-sales-metrics {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
   margin-bottom: 1.25rem;
 }
 
-.cmx-metric-card {
+.cmx-l5m-metric-card {
   background: #FBF9F5;
   border: 1px solid #EAE4DB;
   border-radius: 6px;
@@ -649,40 +710,40 @@ body:has(.cmx-locator-wrap) .entry-header {
   text-align: center;
 }
 
-.cmx-metric-label {
+.cmx-l5m-metric-label {
   font-size: 0.78rem;
   color: #8C847C;
   font-weight: 700;
   text-transform: uppercase;
 }
 
-.cmx-metric-value {
+.cmx-l5m-metric-value {
   font-size: 1.6rem;
   font-weight: 800;
   color: #B37A4C;
   margin: 0.25rem 0;
 }
 
-.cmx-sales-grid {
+.cmx-l5m-sales-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1rem;
 }
 
-.cmx-sales-card {
+.cmx-l5m-sales-card {
   background: #FDFBF7;
   border: 1px solid #EAE4DB;
   border-radius: 6px;
   padding: 1rem;
 }
 
-.cmx-sales-card-title {
+.cmx-l5m-sales-card-title {
   font-weight: 700;
   font-size: 1rem;
   color: #2C2825;
 }
 
-.cmx-sales-card-vol {
+.cmx-l5m-sales-card-vol {
   font-size: 0.88rem;
   color: #B37A4C;
   margin-top: 0.4rem;
@@ -690,12 +751,28 @@ body:has(.cmx-locator-wrap) .entry-header {
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-  .cmx-locator-body {
+  .cmx-l5m-header-controls {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cmx-l5m-month-filter-wrap,
+  .cmx-l5m-select-month {
+    width: 100%;
+  }
+
+  .cmx-l5m-view-toggle {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .cmx-l5m-locator-body {
     flex-direction: column-reverse !important;
     height: auto !important;
   }
 
-  .cmx-sidebar {
+  .cmx-l5m-sidebar {
     width: 100% !important;
     max-width: 100% !important;
     flex: none !important;
@@ -704,7 +781,7 @@ body:has(.cmx-locator-wrap) .entry-header {
     border-top: 1px solid #EAE4DB !important;
   }
 
-  .cmx-map-container {
+  .cmx-l5m-map-container {
     height: 350px !important;
     min-height: 300px !important;
     width: 100% !important;

@@ -7,11 +7,11 @@ the site receives a validated, cached JSON feed within 15 minutes.
 ## Repository layout
 
 ```text
-apps-script/                         Google Sheets JSON web app
-wordpress/casa-mexico-locator-sync/ WordPress cache and browser feed loader
-tests/                               Feed transformation and syntax checks
-.github/workflows/deploy.yml         CI and optional Apps Script deployment
-examples/                             Reference Google Sheets upload workbook
+apps-script/                             Google Sheets JSON web app
+wordpress/last_5_month_store_locator/    WordPress cache, Last 5 Months filter & browser feed loader
+tests/                                   Feed transformation and syntax checks
+.github/workflows/deploy.yml             CI and optional Apps Script deployment
+examples/                                Reference Google Sheets upload workbook
 ```
 
 The reference workbook is available at
@@ -80,24 +80,24 @@ pushes to `main`. Manual workflow dispatches can deploy without that variable.
 
 ## 3. Install the WordPress plugin
 
-1. Copy `wordpress/casa-mexico-locator-sync/` to
-   `wp-content/plugins/casa-mexico-locator-sync/`.
-2. Activate **Casa Mexico Store Locator Sync**.
-3. Open **Settings → Casa Mexico Locator**.
+1. Copy `wordpress/last_5_month_store_locator/` to
+   `wp-content/plugins/last_5_month_store_locator/`.
+2. Activate **Casa Mexico Store Locator (Last 5 Months)**.
+3. Open **Settings → Last 5 Month Locator**.
 4. Paste the Apps Script `/exec` URL, including `?token=...` when used.
-5. Leave the safety floor at 50, save, and click **Sync now**.
+5. Leave the safety floor at 50, save, and click **Save & Sync Now**.
+6. Embed `[casa_mexico_locator_last_5_month]` on your page.
 
 The plugin validates every row, keeps a backup, atomically replaces
-`wp-content/uploads/casa-mexico-locations.json`, and refreshes it every 15
+`wp-content/uploads/casa-mexico-last-5-month-locations.json`, and refreshes it every 15
 minutes. A broken or unexpectedly small feed leaves the last good map intact.
 
 ## 4. Connect the existing locator
 
-The plugin loads the feed and exposes it as `window.CMX_LOCATOR.locations`. It
-also emits a browser event once the data is ready:
+The plugin loads the feed, filters `window.CMX_L5M_LOCATOR.locations` to the Last 5 Months by default (with `allLocations` available for the Month/Year selector), and emits a browser event once the data is ready:
 
 ```js
-window.addEventListener('cmx:locations-ready', function (event) {
+window.addEventListener('cmx-l5m:locations-ready', function (event) {
   const locations = event.detail.locations;
   // Replace this with the existing locator's render/update function.
   renderStoreLocator(locations);
@@ -112,7 +112,7 @@ feed location object contains `name`, `address`, `city`, `state`, `postalCode`,
 
 ```bash
 npm run check
-php -l wordpress/casa-mexico-locator-sync/casa-mexico-locator-sync.php
+php -l wordpress/last_5_month_store_locator/last_5_month_store_locator.php
 ```
 
 See [`docs-pipeline.md`](docs-pipeline.md) for safeguards and operational

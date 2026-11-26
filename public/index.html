@@ -110,7 +110,61 @@
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .month-filter-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .month-filter-icon {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .month-filter-select {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.6rem 2.25rem 0.6rem 2.3rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2.2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.7rem center;
+      background-size: 14px;
+      min-width: 195px;
+    }
+
+    .month-filter-select:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: rgba(99, 102, 241, 0.6);
+    }
+
+    .month-filter-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .month-filter-select option {
+      background-color: #0f172a;
+      color: #f8fafc;
     }
 
     .btn {
@@ -596,6 +650,13 @@
         grid-template-columns: 1fr 1fr;
         gap: 0.5rem;
       }
+      .month-filter-wrap {
+        grid-column: 1 / -1;
+        width: 100%;
+      }
+      .month-filter-select {
+        width: 100%;
+      }
       .header-actions .btn {
         justify-content: center;
         padding: 0.55rem 0.6rem;
@@ -736,11 +797,17 @@
           <img src="logo-casa-mexico.svg" alt="Casa Mexico Logo" style="height: 32px; width: auto; max-width: 65px; object-fit: contain;">
         </div>
         <div class="brand-title">
-          <h1>Casa Mexico Store Locator</h1>
+          <h1>Casa Mexico Last 5 Month Store Locator</h1>
           <p>Automater Pipeline & Feed Preview</p>
         </div>
       </div>
       <div class="header-actions">
+        <div class="month-filter-wrap" title="Filter dashboard by Last 5 Months or specific Month & Year">
+          <span class="month-filter-icon" aria-hidden="true">📅</span>
+          <select id="month-filter-select" class="month-filter-select" aria-label="Filter by month" onchange="onMonthFilterChange()">
+            <option value="last_5_months" selected>Last 5 Months</option>
+          </select>
+        </div>
         <button id="btn-force-refresh" class="btn btn-secondary" onclick="fetchFeedData(true)">
           🔄 Force Refresh
         </button>
@@ -889,6 +956,235 @@
   <script>
     let globalFeedData = null;
     let visibleCount = 8;
+    let selectedMonthFilter = 'last_5_months';
+    const LAST_N_MONTHS = 5;
+
+    const MONTH_FULL_NAMES = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    const MONTH_TOKEN_MAP = {
+      jan: 1, january: 1,
+      feb: 2, february: 2,
+      mar: 3, march: 3,
+      apr: 4, april: 4,
+      may: 5,
+      jun: 6, june: 6,
+      jul: 7, july: 7,
+      aug: 8, august: 8,
+      sep: 9, sept: 9, september: 9,
+      oct: 10, october: 10,
+      nov: 11, november: 11,
+      dec: 12, december: 12
+    };
+
+    function buildMonthMeta(year, month1To12) {
+      if (!year || !month1To12 || month1To12 < 1 || month1To12 > 12 || year < 2000 || year > 2100) {
+        return null;
+      }
+      return {
+        year: year,
+        month: month1To12,
+        key: `${year}-${String(month1To12).padStart(2, '0')}`,
+        label: `${MONTH_FULL_NAMES[month1To12 - 1]} ${year}`,
+        index: year * 12 + (month1To12 - 1)
+      };
+    }
+
+    function parseMonthYearFromText(text) {
+      if (!text) return null;
+      const str = String(text);
+
+      // Pattern 1: Month Year (e.g. "October 2026", "July 2026 NY-NJ", "Sept. 2026", "August2026")
+      const mFirst = str.match(/(?:^|[^a-z])(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)(?=[^a-z]|$)[\s\-_.,]*(20\d{2})(?!\d)/i);
+      if (mFirst) {
+        const mon = MONTH_TOKEN_MAP[mFirst[1].toLowerCase()];
+        const yr = parseInt(mFirst[2], 10);
+        if (mon && yr) return buildMonthMeta(yr, mon);
+      }
+
+      // Pattern 2: Year Month (e.g. "2026 October", "2026-Oct")
+      const yFirst = str.match(/(?:^|[^0-9])(20\d{2})[\s\-_.,]*(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)(?=[^a-z]|$)/i);
+      if (yFirst) {
+        const yr = parseInt(yFirst[1], 10);
+        const mon = MONTH_TOKEN_MAP[yFirst[2].toLowerCase()];
+        if (mon && yr) return buildMonthMeta(yr, mon);
+      }
+
+      return null;
+    }
+
+    function parseMonthYearFromDateStr(dateStr) {
+      if (!dateStr) return null;
+      const s = String(dateStr).trim();
+      if (!s) return null;
+
+      // ISO / YYYY-MM-DD or YYYY/MM
+      const isoMatch = s.match(/^(20\d{2})[\/\-\.](\d{1,2})(?:[\/\-\.]\d{1,2})?(?:\b|$)/);
+      if (isoMatch) {
+        return buildMonthMeta(parseInt(isoMatch[1], 10), parseInt(isoMatch[2], 10));
+      }
+
+      // US MM/DD/YY or MM/DD/YYYY (e.g. 07/31/26, 08/04/2026)
+      const slashMatch = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})$/);
+      if (slashMatch) {
+        let p1 = parseInt(slashMatch[1], 10);
+        let p2 = parseInt(slashMatch[2], 10);
+        let yr = parseInt(slashMatch[3], 10);
+        if (yr < 100) yr += 2000;
+        let mon = p1;
+        if (mon > 12 && p2 >= 1 && p2 <= 12) mon = p2;
+        return buildMonthMeta(yr, mon);
+      }
+
+      // Text month + year inside date
+      const textMeta = parseMonthYearFromText(s);
+      if (textMeta) return textMeta;
+
+      // Full JS Date string (e.g. "Tue Aug 04 2026 12:30:00 GMT+0530")
+      if (/[a-zA-Z]{3,}/.test(s) || s.includes('T')) {
+        const dt = new Date(s);
+        if (!isNaN(dt.getTime())) {
+          return buildMonthMeta(dt.getFullYear(), dt.getMonth() + 1);
+        }
+      }
+
+      return null;
+    }
+
+    function extractLocationMonthInfo(loc) {
+      if (!loc) return null;
+      if (loc._monthMeta !== undefined) return loc._monthMeta;
+      const meta = parseMonthYearFromDateStr(loc.date) || parseMonthYearFromText(loc.tabName) || null;
+      loc._monthMeta = meta;
+      return meta;
+    }
+
+    function isWithinLastNMonths(monthIndex, n = LAST_N_MONTHS, refDate = new Date()) {
+      if (monthIndex === null || monthIndex === undefined) return false;
+      const currentMonthIndex = refDate.getFullYear() * 12 + refDate.getMonth();
+      const minMonthIndex = currentMonthIndex - (n - 1);
+      return monthIndex >= minMonthIndex && monthIndex <= currentMonthIndex;
+    }
+
+    function getLocationsForPeriod(locations, periodValue, refDate = new Date()) {
+      if (!Array.isArray(locations)) return [];
+      const mode = periodValue || 'last_5_months';
+      if (mode === 'all') return locations;
+      if (mode === 'last_5_months') {
+        return locations.filter(loc => {
+          const meta = extractLocationMonthInfo(loc);
+          return meta && isWithinLastNMonths(meta.index, LAST_N_MONTHS, refDate);
+        });
+      }
+      return locations.filter(loc => {
+        const meta = extractLocationMonthInfo(loc);
+        return meta && meta.key === mode;
+      });
+    }
+
+    function getPeriodLocations() {
+      if (!globalFeedData || !Array.isArray(globalFeedData.locations)) return [];
+      return getLocationsForPeriod(globalFeedData.locations, selectedMonthFilter);
+    }
+
+    function populateMonthFilter(locations) {
+      const select = document.getElementById('month-filter-select');
+      if (!select) return;
+
+      const monthsMap = {};
+      let last5Count = 0;
+
+      (locations || []).forEach(loc => {
+        const meta = extractLocationMonthInfo(loc);
+        if (meta) {
+          if (!monthsMap[meta.key]) {
+            monthsMap[meta.key] = { key: meta.key, label: meta.label, index: meta.index, count: 0 };
+          }
+          monthsMap[meta.key].count++;
+          if (isWithinLastNMonths(meta.index, LAST_N_MONTHS)) {
+            last5Count++;
+          }
+        }
+      });
+
+      const sortedMonths = Object.values(monthsMap).sort((a, b) => b.index - a.index);
+      const prevVal = selectedMonthFilter || select.value || 'last_5_months';
+
+      let html = `<option value="last_5_months">Last 5 Months (${last5Count})</option>`;
+      html += `<option value="all">All Months (${(locations || []).length})</option>`;
+      sortedMonths.forEach(m => {
+        html += `<option value="${escapeHtml(m.key)}">${escapeHtml(m.label)} (${m.count})</option>`;
+      });
+
+      select.innerHTML = html;
+      if (prevVal === 'last_5_months' || prevVal === 'all' || monthsMap[prevVal]) {
+        select.value = prevVal;
+        selectedMonthFilter = prevVal;
+      } else {
+        select.value = 'last_5_months';
+        selectedMonthFilter = 'last_5_months';
+      }
+    }
+
+    function onMonthFilterChange() {
+      const select = document.getElementById('month-filter-select');
+      selectedMonthFilter = select ? select.value : 'last_5_months';
+      visibleCount = 8;
+      visibleSalesCount = 8;
+      visibleSheetStoresCount = 8;
+      selectedExplorerTab = null;
+      applyMonthFilterAndRender(true);
+    }
+
+    function applyMonthFilterAndRender(logChange = false) {
+      if (!globalFeedData || !Array.isArray(globalFeedData.locations)) return;
+
+      const periodLocations = getPeriodLocations();
+      const totalLocationsCount = globalFeedData.locations.length;
+      const skippedAwaiting = globalFeedData.skipped ? (globalFeedData.skipped.invalidCoordinates || 0) : 0;
+      const totalSkipped = globalFeedData.skipped ? ((globalFeedData.skipped.notReady || 0) + (globalFeedData.skipped.invalidCoordinates || 0) + (globalFeedData.skipped.duplicate || 0)) : 0;
+      const totalRows = globalFeedData.rawRowCount || (totalLocationsCount + totalSkipped);
+
+      document.getElementById('stat-published').textContent = periodLocations.length;
+      document.getElementById('stat-awaiting').textContent = skippedAwaiting;
+      document.getElementById('stat-workbook').textContent = selectedMonthFilter === 'all' ? totalRows : periodLocations.length;
+
+      const selectEl = document.getElementById('month-filter-select');
+      const activeLabel = selectEl && selectEl.options[selectEl.selectedIndex]
+        ? selectEl.options[selectEl.selectedIndex].textContent.replace(/\s*\(\d+\)$/, '')
+        : 'Last 5 Months';
+
+      const publishedCardDesc = document.querySelector('.stat-published .stat-desc');
+      if (publishedCardDesc) {
+        publishedCardDesc.textContent = `Ready with valid coordinates (${activeLabel})`;
+      }
+      const workbookCardDesc = document.querySelector('.stat-excluded .stat-desc');
+      if (workbookCardDesc) {
+        workbookCardDesc.textContent = selectedMonthFilter === 'all'
+          ? 'Total rows parsed from Google Sheet'
+          : `Filtered from ${totalRows} total sheet rows`;
+      }
+
+      const filteredPayload = Object.assign({}, globalFeedData, {
+        periodFilter: selectedMonthFilter,
+        count: periodLocations.length,
+        totalUnfilteredCount: totalLocationsCount,
+        locations: periodLocations
+      });
+      document.getElementById('json-viewer').textContent = JSON.stringify(filteredPayload, null, 2);
+
+      populateStateFilter(periodLocations);
+      populateSheetTabFilter(periodLocations);
+      renderSalesTab(periodLocations);
+      renderSheetsExplorer(periodLocations);
+      resetAndRenderStores();
+
+      if (logChange) {
+        logMsg(`Period filter set to "${activeLabel}": showing ${periodLocations.length} of ${totalLocationsCount} sheet locations.`);
+      }
+    }
 
     function logMsg(msg) {
       const panel = document.getElementById('log-panel');
@@ -991,26 +1287,14 @@
         }
 
         globalFeedData = data;
-        
-        const publishedCount = data.count || data.locations.length || 0;
-        const skippedAwaiting = data.skipped ? (data.skipped.invalidCoordinates || 0) : 0;
-        const totalSkipped = data.skipped ? ((data.skipped.notReady || 0) + (data.skipped.invalidCoordinates || 0) + (data.skipped.duplicate || 0)) : 0;
-        const totalRows = data.rawRowCount || (publishedCount + totalSkipped);
-
-        document.getElementById('stat-published').textContent = publishedCount;
-        document.getElementById('stat-awaiting').textContent = skippedAwaiting;
-        document.getElementById('stat-workbook').textContent = totalRows;
+        populateMonthFilter(data.locations || []);
 
         document.getElementById('stat-generated-at').textContent = 'Generated: ' + new Date(data.generatedAt || Date.now()).toLocaleTimeString();
-        document.getElementById('json-viewer').textContent = JSON.stringify(data, null, 2);
 
-        populateStateFilter(data.locations || []);
-        populateSheetTabFilter(data.locations || []);
-        renderSalesTab(data.locations || []);
-        renderSheetsExplorer(data.locations || []);
-        resetAndRenderStores();
-        logMsg(`Feed loaded successfully. ${publishedCount} publishable locations returned.`);
-        if (refresh) showToast(`Force Refresh Complete! ${publishedCount} locations updated cleanly.`, 'success');
+        applyMonthFilterAndRender(false);
+        const periodLocations = getPeriodLocations();
+        logMsg(`Feed loaded successfully. ${periodLocations.length} locations shown (${data.locations.length} total in sheet).`);
+        if (refresh) showToast(`Force Refresh Complete! ${periodLocations.length} locations updated cleanly.`, 'success');
       } catch (err) {
         logMsg('Error loading feed: ' + err.message);
         showToast('Error loading feed: ' + err.message, 'error');
@@ -1165,18 +1449,28 @@
 
     function loadMoreSalesTerritories() {
       visibleSalesCount += 8;
-      if (globalFeedData && globalFeedData.locations) {
-        renderSalesTab(globalFeedData.locations);
+      const periodLocations = getPeriodLocations();
+      if (periodLocations.length > 0) {
+        renderSalesTab(periodLocations);
       }
     }
 
     let visibleSheetStoresCount = 8;
 
     function renderSheetsExplorer(locations) {
-      if (!locations || locations.length === 0) return;
-      const tabs = [...new Set(locations.map(l => l.tabName).filter(Boolean))].sort();
       const pillsContainer = document.getElementById('sheet-pills-container');
+      const explorerContainer = document.getElementById('sheet-explorer-container');
+      const sheetShowMoreWrap = document.getElementById('sheet-show-more-wrap');
       if (!pillsContainer) return;
+      if (!locations || locations.length === 0) {
+        pillsContainer.innerHTML = '';
+        if (explorerContainer) {
+          explorerContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); padding: 3rem;">No sheet tabs available for the selected period.</div>';
+        }
+        if (sheetShowMoreWrap) sheetShowMoreWrap.innerHTML = '';
+        return;
+      }
+      const tabs = [...new Set(locations.map(l => l.tabName).filter(Boolean))].sort();
       pillsContainer.innerHTML = '';
 
       if (!selectedExplorerTab || !tabs.includes(selectedExplorerTab)) {
@@ -1208,8 +1502,9 @@
 
     function loadMoreSheetStores() {
       visibleSheetStoresCount += 8;
-      if (globalFeedData && globalFeedData.locations && selectedExplorerTab) {
-        renderSheetExplorerStores(selectedExplorerTab, globalFeedData.locations);
+      const periodLocations = getPeriodLocations();
+      if (periodLocations.length > 0 && selectedExplorerTab) {
+        renderSheetExplorerStores(selectedExplorerTab, periodLocations);
       }
     }
 
@@ -1410,6 +1705,7 @@
 
     function renderStores() {
       if (!globalFeedData || !globalFeedData.locations) return;
+      const periodLocations = getPeriodLocations();
 
       const searchTerm = document.getElementById('search-input').value.toLowerCase();
       const selectedTab = document.getElementById('sheet-tab-select') ? document.getElementById('sheet-tab-select').value : '';
@@ -1420,7 +1716,7 @@
       const container = document.getElementById('store-container');
       container.innerHTML = '';
 
-      let filtered = globalFeedData.locations.filter(loc => {
+      let filtered = periodLocations.filter(loc => {
         const rawName = String(loc.name || '').trim();
         if (isTotalSummaryRow(rawName)) {
           return false;
@@ -1495,7 +1791,7 @@
       if (target) target.classList.remove('hidden');
 
       if (tabName === 'sheets' && globalFeedData && globalFeedData.locations) {
-        renderSheetsExplorer(globalFeedData.locations);
+        renderSheetsExplorer(getPeriodLocations());
       }
     }
 
@@ -1512,6 +1808,8 @@
         if (btnSync) btnSync.innerHTML = '⚡ Simulate WP Sync';
         return;
       }
+
+      const activeLocations = getPeriodLocations();
       
       // Simulate WordPress validation logic
       if (globalFeedData.locations.length < 50) {
@@ -1522,10 +1820,10 @@
       }
 
       logMsg('✅ WP Sync Validated shape, coordinates, and minimum location floor.');
-      logMsg('💾 Updated cached feed file: wp-content/uploads/casa-mexico-locations.json');
-      window.dispatchEvent(new CustomEvent('cmx:locations-ready', { detail: globalFeedData }));
-      logMsg('📡 Emitted browser event "cmx:locations-ready"');
-      showToast(`Instant WP Live Sync Completed! ${globalFeedData.locations.length} stores published atomically.`, 'success');
+      logMsg('💾 Updated cached feed file: wp-content/uploads/casa-mexico-last-5-month-locations.json');
+      window.dispatchEvent(new CustomEvent('cmx-l5m:locations-ready', { detail: Object.assign({}, globalFeedData, { locations: activeLocations, allLocations: globalFeedData.locations }) }));
+      logMsg('📡 Emitted browser event "cmx-l5m:locations-ready"');
+      showToast(`Instant WP Live Sync Completed! ${activeLocations.length} locations active (${globalFeedData.locations.length} total cached).`, 'success');
       if (btnSync) btnSync.innerHTML = '⚡ Simulate WP Sync';
     }
 
